@@ -1,24 +1,19 @@
-# Streamlit app
+# Streamlit framework
 streamlit
 
-# PyTorch (CPU version to avoid GPU/CUDA install errors)
+# PyTorch CPU build
 torch==2.3.1+cpu
 torchvision==0.18.1+cpu
 torchaudio==2.3.1+cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
 
-# Grad-CAM for visualization
+# Grad-CAM and image tools
 pytorch-grad-cam
-
-# Image processing
 Pillow
 opencv-python
 
-# Scientific libraries
+# Scientific & utility libraries
 numpy
 matplotlib
 scikit-learn
-
-# Optional utilities
 tqdm
-
