@@ -4,11 +4,9 @@ import torch.nn as nn
 from torchvision import models, transforms
 from PIL import Image
 import numpy as np
-import cv2
-import matplotlib.pyplot as plt
 
 # -------------------------------
-# ✅ 1. Model Loading
+# 1️⃣ Load Model
 # -------------------------------
 @st.cache_resource
 def load_model():
@@ -19,7 +17,7 @@ def load_model():
     return model
 
 # -------------------------------
-# ✅ 2. Grad-CAM (Custom Implementation)
+# 2️⃣ Custom Grad-CAM
 # -------------------------------
 def generate_gradcam(model, img_tensor, target_class=None):
     model.eval()
@@ -36,7 +34,7 @@ def generate_gradcam(model, img_tensor, target_class=None):
     score = outputs[0, target_class]
     score.backward()
 
-    # Extract gradients and activations from last conv layer
+    # Gradients & activations
     gradients = model.layer4[1].conv2.weight.grad
     activations = model.layer4[1].conv2(img_tensor)
 
@@ -44,15 +42,34 @@ def generate_gradcam(model, img_tensor, target_class=None):
     weights = gradients.mean(dim=(2, 3), keepdim=True)
     gradcam = torch.sum(weights * activations, dim=1).squeeze().detach().cpu().numpy()
 
-    # Normalize Grad-CAM
+    # Normalize
     gradcam = np.maximum(gradcam, 0)
     gradcam /= gradcam.max() + 1e-8
     return gradcam
 
 # -------------------------------
-# ✅ 3. Streamlit App Layout
+# 3️⃣ Overlay Heatmap on Image
 # -------------------------------
-st.title("🩻 Chest X-Ray Classification with Grad-CAM (Cloud Compatible)")
+def overlay_heatmap_on_image(image, heatmap):
+    """
+    image: PIL.Image
+    heatmap: 2D numpy array normalized 0-1
+    """
+    # Resize heatmap to match image
+    heatmap_resized = Image.fromarray(np.uint8(255 * heatmap)).resize(image.size)
+    heatmap_rgb = np.array(heatmap_resized.convert("RGB"))
+
+    # Convert original image to NumPy
+    image_np = np.array(image)
+
+    # Superimpose
+    superimposed = (0.6 * image_np + 0.4 * heatmap_rgb).astype(np.uint8)
+    return Image.fromarray(superimposed)
+
+# -------------------------------
+# 4️⃣ Streamlit App Layout
+# -------------------------------
+st.title("🩻 Chest X-Ray Classification with Grad-CAM (Cloud-Compatible)")
 st.write("Upload a Chest X-ray image to classify as **Normal** or **Pneumonia** and visualize model focus areas.")
 
 uploaded_file = st.file_uploader("📤 Upload an X-ray Image", type=["jpg", "jpeg", "png"])
@@ -85,11 +102,5 @@ if uploaded_file is not None:
     # Grad-CAM Visualization
     st.subheader("🧠 Model Focus (Grad-CAM)")
     gradcam = generate_gradcam(model, img_tensor, predicted_class)
-
-    heatmap = cv2.applyColorMap(np.uint8(255 * gradcam), cv2.COLORMAP_JET)
-    image_resized = np.array(image.resize((224, 224)))
-    superimposed = cv2.addWeighted(cv2.cvtColor(image_resized, cv2.COLOR_RGB2BGR), 0.6, heatmap, 0.4, 0)
-
-    st.image(cv2.cvtColor(superimposed, cv2.COLOR_BGR2RGB),
-             caption="Grad-CAM Heatmap",
-             use_container_width=True)
+    gradcam_image = overlay_heatmap_on_image(image, gradcam)
+    st.image(gradcam_image, caption="Grad-CAM Heatmap", use_container_width=True)
