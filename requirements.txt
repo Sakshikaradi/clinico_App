@@ -6,10 +6,7 @@ torchvision==0.17.2+cpu
 torchaudio==2.2.2+cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
 
-# Headless OpenCV (no libGL dependency)
-opencv-python-headless==4.7.0.72
-
-# Core libraries
+# Core Python libraries
 numpy
 matplotlib
 Pillow
