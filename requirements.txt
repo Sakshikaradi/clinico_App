@@ -1,8 +1,20 @@
+# Core app framework
 streamlit
+
+# Deep learning & model dependencies
 torch
 torchvision
 torchaudio
+pytorch-grad-cam
+
+# Image processing
 Pillow
+opencv-python
+
+# Math & scientific libraries
 numpy
 matplotlib
-opencv-python
+
+# Optional utilities
+scikit-learn
+tqdm
