@@ -1,11 +1,15 @@
 streamlit
 
+# PyTorch CPU build
 torch==2.2.2+cpu
 torchvision==0.17.2+cpu
 torchaudio==2.2.2+cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
 
-opencv-python-headless==4.10.0.84
+# Use truly headless OpenCV to avoid libGL errors
+opencv-python-headless==4.8.1.78
+
+# Core scientific libraries
 numpy
 matplotlib
 Pillow
