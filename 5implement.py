@@ -17,7 +17,7 @@ def load_model():
     return model
 
 # -------------------------------
-# 2️⃣ Simple Grad-CAM (CPU, No OpenCV)
+# 2️⃣ Grad-CAM
 # -------------------------------
 def generate_gradcam(model, img_tensor, target_class=None):
     model.eval()
@@ -48,28 +48,19 @@ def generate_gradcam(model, img_tensor, target_class=None):
     return gradcam
 
 # -------------------------------
-# 3️⃣ Overlay Grad-CAM Heatmap on Image
+# 3️⃣ Overlay Heatmap
 # -------------------------------
 def overlay_heatmap_on_image(image, heatmap):
-    """
-    image: PIL.Image
-    heatmap: 2D numpy array normalized 0-1
-    """
-    # Resize heatmap to match image
     heatmap_resized = Image.fromarray(np.uint8(255 * heatmap)).resize(image.size)
     heatmap_rgb = np.array(heatmap_resized.convert("RGB"))
-
-    # Original image as NumPy
     image_np = np.array(image)
-
-    # Superimpose heatmap
     superimposed = (0.6 * image_np + 0.4 * heatmap_rgb).astype(np.uint8)
     return Image.fromarray(superimposed)
 
 # -------------------------------
-# 4️⃣ Streamlit App Layout
+# 4️⃣ Streamlit App
 # -------------------------------
-st.title("🩻 Chest X-Ray Classification with Grad-CAM (Cloud-Ready)")
+st.title("🩻 Chest X-Ray Classification with Grad-CAM (Python 3.11 Cloud-Ready)")
 st.write("Upload a Chest X-ray image to classify as **Normal** or **Pneumonia** and visualize Grad-CAM heatmaps.")
 
 uploaded_file = st.file_uploader("📤 Upload X-ray Image", type=["jpg", "jpeg", "png"])
@@ -99,7 +90,7 @@ if uploaded_file is not None:
         st.subheader(f"✅ Prediction: {classes[predicted_class]}")
         st.write(f"**Confidence:** {probs[predicted_class]*100:.2f}%")
 
-    # Grad-CAM visualization
+    # Grad-CAM
     st.subheader("🧠 Model Focus (Grad-CAM)")
     gradcam = generate_gradcam(model, img_tensor, predicted_class)
     gradcam_image = overlay_heatmap_on_image(image, gradcam)
