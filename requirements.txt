@@ -1,22 +1,11 @@
-# Streamlit app
 streamlit
-
-# PyTorch (CPU-only build)
 torch==2.2.2+cpu
 torchvision==0.17.2+cpu
 torchaudio==2.2.2+cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
-
-# Build tools (needed before installing pytorch-grad-cam)
-cython
-wheel
-setuptools
-numpy
 opencv-python-headless
+numpy
 matplotlib
-scikit-learn
 Pillow
+scikit-learn
 tqdm
-
-# Grad-CAM library
-pytorch-grad-cam==1.4.8
