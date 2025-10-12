@@ -1,12 +1,12 @@
 streamlit
 
-# PyTorch CPU for Python 3.13
+# PyTorch CPU compatible with Python 3.11
 torch==2.8.0+cpu
 torchvision==0.15.2+cpu
 torchaudio==2.8.0+cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
 
-# Core libraries
+# Core Python libraries
 numpy
 matplotlib
 Pillow
