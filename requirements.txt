@@ -1,4 +1,4 @@
-# Streamlit framework
+# Streamlit app
 streamlit
 
 # PyTorch (CPU-only build)
@@ -7,13 +7,16 @@ torchvision==0.17.2+cpu
 torchaudio==2.2.2+cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
 
-# Grad-CAM (compatible version)
-pytorch-grad-cam==1.4.8
-
-# Image & scientific tools
-Pillow
-opencv-python-headless
+# Build tools (needed before installing pytorch-grad-cam)
+cython
+wheel
+setuptools
 numpy
+opencv-python-headless
 matplotlib
 scikit-learn
+Pillow
 tqdm
+
+# Grad-CAM library
+pytorch-grad-cam==1.4.8
