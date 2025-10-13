@@ -1,14 +1,8 @@
-streamlit
-
-# PyTorch CPU compatible with Python 3.11
-torch==2.8.0+cpu
-torchvision==0.15.2+cpu
-torchaudio==2.8.0+cpu
---extra-index-url https://download.pytorch.org/whl/cpu
-
-# Core Python libraries
+streamlit==1.37.0
+torch==2.3.1
+torchvision==0.18.1
 numpy
-matplotlib
+pandas
 Pillow
+matplotlib
 scikit-learn
-tqdm
