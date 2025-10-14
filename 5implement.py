@@ -1,31 +1,37 @@
 import os
+import urllib.request
 import torch
-import torch.nn as nn
 from torchvision import models
-import streamlit as st
-import gdown  # install with `pip install gdown`
+import torch.nn as nn
 
-@st.cache_resource
 def load_model():
     model_path = "model_finetuned.pth"
+    url = "https://drive.google.com/uc?export=download&id=https://drive.google.com/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=sharing"
 
-    # Download model if it doesn't exist locally
+    # Download the model if not exists
     if not os.path.exists(model_path):
-        url = "https://drive.google.com/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=sharing"
-        st.info("📥 Downloading model from Google Drive...")
-        gdown.download(url, model_path, quiet=False)
-        st.success("✅ Model downloaded successfully!")
+        print("Downloading model...")
+        urllib.request.urlretrieve(url, model_path)
+        print("Download complete!")
 
-    # Load model architecture
-    model = models.resnet18(weights=None)
-    model.fc = nn.Linear(model.fc.in_features, 2)
+    # Initialize the model architecture
+    model = models.resnet18(weights=None)  # No pretrained weights
+    model.fc = nn.Linear(model.fc.in_features, 2)  # Adjust for 2 classes
 
-    # Load weights safely
-    model.load_state_dict(torch.load(model_path, map_location="cpu"))
-    model.eval()
+    # ✅ Load model weights safely (PyTorch ≥2.6)
+    try:
+        model.load_state_dict(torch.load(model_path, map_location="cpu", weights_only=False))
+    except Exception as e:
+        # If weights_only=False fails, fallback to older method
+        print("Warning: weights_only=False failed. Attempting legacy load...")
+        model.load_state_dict(torch.load(model_path, map_location="cpu"))
+
+    model.eval()  # Set to evaluation mode
     return model
-# Load the model
+
+# Usage in Streamlit
 model = load_model()
+
 
 # -------------------------------
 # 2. Define image transforms
@@ -55,6 +61,7 @@ if uploaded_file:
         _, predicted = torch.max(output, 1)
         classes = ["Normal", "Pneumonia"]
         st.subheader(f"🩺 Prediction: **{classes[predicted.item()]}**")
+
 
 
 
