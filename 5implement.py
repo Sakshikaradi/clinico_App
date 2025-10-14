@@ -19,7 +19,7 @@ def load_model():
     model_path = "model_finetuned.pth"
 
     if not os.path.exists(model_path):
-        url =https://drive.google.com/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=sharing  # e.g. a public Google Drive or Dropbox link
+        url ="https://drive.google.com/uc?export=download&id=1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0"  # e.g. a public Google Drive or Dropbox link
         urllib.request.urlretrieve(url, model_path)
 
     model = models.resnet18(pretrained=False)
@@ -93,4 +93,5 @@ if uploaded_file is not None:
     plt.imshow(visualization)
     plt.axis("off")
     st.pyplot(plt)
+
 
