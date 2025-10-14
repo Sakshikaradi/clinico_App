@@ -14,28 +14,30 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 # 1. Load fine-tuned model
 # -------------------------------
 @st.cache_resource
+import os
+import torch
+from torchvision import models
+import torch.nn as nn
+import streamlit as st
+
+@st.cache_resource
 def load_model():
     model_path = "model_finetuned.pth"
 
     # Download if missing
     if not os.path.exists(model_path):
-        try:
-            import gdown
-        except ImportError:
-            os.system("pip install gdown")
-            import gdown
+        import gdown
         url = "https://drive.google.com/uc?id=1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0"
         st.info("📥 Downloading model from Google Drive...")
         gdown.download(url, model_path, quiet=False)
         st.success("✅ Model downloaded successfully!")
 
-    # Load model architecture
+    # Load architecture
     model = models.resnet18(weights=None)
     model.fc = nn.Linear(model.fc.in_features, 2)
 
-    # ✅ Fix for PyTorch ≥2.6
-    model.load_state_dict(torch.load(model_path, map_location="cpu", weights_only=False))
-
+    # Load weights
+    model.load_state_dict(torch.load(model_path, map_location="cpu"))
     model.eval()
     return model
 
@@ -72,4 +74,5 @@ if uploaded_file:
         _, predicted = torch.max(output, 1)
         classes = ["Normal", "Pneumonia"]
         st.subheader(f"🩺 Prediction: **{classes[predicted.item()]}**")
+
 
