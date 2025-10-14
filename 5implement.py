@@ -1,42 +1,29 @@
 import os
 import torch
 import torch.nn as nn
-from torchvision import models, transforms
+from torchvision import models
 import streamlit as st
-from PIL import Image
-import numpy as np
-import urllib.request
-import matplotlib.pyplot as plt
-from pytorch_grad_cam import GradCAM
-from pytorch_grad_cam.utils.image import show_cam_on_image
-
-# -------------------------------
-# 1. Load fine-tuned model
-# -------------------------------
+import gdown  # install with `pip install gdown`
 
 @st.cache_resource
 def load_model():
     model_path = "model_finetuned.pth"
 
-    # Download if missing
+    # Download model if it doesn't exist locally
     if not os.path.exists(model_path):
-        import gdown
         url = "https://drive.google.com/uc?id=1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0"
         st.info("📥 Downloading model from Google Drive...")
         gdown.download(url, model_path, quiet=False)
         st.success("✅ Model downloaded successfully!")
 
-    # Load architecture
+    # Load model architecture
     model = models.resnet18(weights=None)
     model.fc = nn.Linear(model.fc.in_features, 2)
 
-    # Load weights
+    # Load weights safely
     model.load_state_dict(torch.load(model_path, map_location="cpu"))
     model.eval()
     return model
-
-
-
 # Load the model
 model = load_model()
 
@@ -68,6 +55,7 @@ if uploaded_file:
         _, predicted = torch.max(output, 1)
         classes = ["Normal", "Pneumonia"]
         st.subheader(f"🩺 Prediction: **{classes[predicted.item()]}**")
+
 
 
 
