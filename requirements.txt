@@ -3,8 +3,10 @@
 streamlit==1.37.0
 torch==2.8.0+cpu
 torchvision==0.23.0+cpu
+gdown
 pillow
 numpy
 matplotlib
 opencv-python-headless==4.10.0.84
 git+https://github.com/jacobgil/pytorch-grad-cam.git
+
