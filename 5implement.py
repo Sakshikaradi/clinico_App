@@ -11,7 +11,7 @@ def load_model():
 
     # Download model if it doesn't exist locally
     if not os.path.exists(model_path):
-        url = "https://drive.google.com/uc?id=1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0"
+        url = "https://drive.google.com/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=sharing"
         st.info("📥 Downloading model from Google Drive...")
         gdown.download(url, model_path, quiet=False)
         st.success("✅ Model downloaded successfully!")
@@ -55,6 +55,7 @@ if uploaded_file:
         _, predicted = torch.max(output, 1)
         classes = ["Normal", "Pneumonia"]
         st.subheader(f"🩺 Prediction: **{classes[predicted.item()]}**")
+
 
 
 
