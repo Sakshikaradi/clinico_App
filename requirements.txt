@@ -6,5 +6,5 @@ torchvision==0.23.0+cpu
 pillow
 numpy
 matplotlib
-opencv-python-headless
+opencv-python-headless==4.10.0.84
 git+https://github.com/jacobgil/pytorch-grad-cam.git
