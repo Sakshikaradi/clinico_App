@@ -1,9 +1,10 @@
 import streamlit as st
 import torch
-from torchvision import models
+from torchvision import models, transforms
 import torch.nn as nn
 import gdown
 import os
+from PIL import Image
 
 # -------------------------------
 # 1. Load fine-tuned model
@@ -13,7 +14,7 @@ def load_model():
     model_path = "model_finetuned.pth"
     
     # Google Drive file ID
-    file_id = "https://drive.google.com/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=drive_link"
+    file_id = "1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0"
     url = f"https://drive.google.com/uc?id={file_id}"
     
     # Download if not present locally
@@ -25,8 +26,7 @@ def load_model():
     model = models.resnet18(weights=None)
     model.fc = nn.Linear(model.fc.in_features, 2)
     
-    # Use weights_only=False for full checkpoint
-    state_dict = torch.load(model_path, map_location="cpu", weights_only=False)
+    state_dict = torch.load(model_path, map_location="cpu")  # load state_dict
     model.load_state_dict(state_dict)
     model.eval()
     
@@ -35,8 +35,6 @@ def load_model():
 
 # Load model
 model = load_model()
-
-
 
 # -------------------------------
 # 2. Define image transforms
@@ -66,13 +64,3 @@ if uploaded_file:
         _, predicted = torch.max(output, 1)
         classes = ["Normal", "Pneumonia"]
         st.subheader(f"🩺 Prediction: **{classes[predicted.item()]}**")
-
-
-
-
-
-
-
-
-
-
