@@ -1,11 +1,11 @@
 import os
-import urllib.request
 import torch
 import torch.nn as nn
 from torchvision import models, transforms
 import streamlit as st
 from PIL import Image
 import numpy as np
+import urllib.request
 import matplotlib.pyplot as plt
 from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image
@@ -17,14 +17,20 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 def load_model():
     model_path = "model_finetuned.pth"
 
-    # ✅ If file not found, download from Google Drive
+    # ✅ Download from Google Drive using gdown (handles big files properly)
     if not os.path.exists(model_path):
-        url = "https://drive.google.com/uc?export=download&id=1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0"
-        st.info("Downloading model... Please wait (around 100MB).")
-        urllib.request.urlretrieve(url, model_path)
+        try:
+            import gdown
+        except ImportError:
+            os.system("pip install gdown")
+            import gdown
+
+        url = "https://drive.google.com/uc?id=1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0"
+        st.info("📥 Downloading model from Google Drive...")
+        gdown.download(url, model_path, quiet=False)
         st.success("✅ Model downloaded successfully!")
 
-    # ✅ Load the model
+    # ✅ Load model
     model = models.resnet18(weights=None)
     model.fc = nn.Linear(model.fc.in_features, 2)
     model.load_state_dict(torch.load(model_path, map_location="cpu"))
@@ -32,7 +38,7 @@ def load_model():
     return model
 
 
-# Load model once
+# Load the model
 model = load_model()
 
 # -------------------------------
@@ -48,7 +54,7 @@ transform = transforms.Compose([
 st.title("🩻 Chest X-Ray Classification (Normal vs Pneumonia)")
 
 # -------------------------------
-# 3. Upload image
+# 3. Upload and predict
 # -------------------------------
 uploaded_file = st.file_uploader("📤 Upload a Chest X-ray", type=["jpg", "jpeg", "png"])
 
@@ -56,10 +62,8 @@ if uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
     st.image(image, caption="Uploaded Image", use_container_width=True)
 
-    # Preprocess
     input_tensor = transform(image).unsqueeze(0)
 
-    # Predict
     with torch.no_grad():
         output = model(input_tensor)
         _, predicted = torch.max(output, 1)
