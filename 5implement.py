@@ -1,35 +1,41 @@
-import os
-import urllib.request
+import streamlit as st
 import torch
 from torchvision import models
 import torch.nn as nn
+import gdown
+import os
 
+# -------------------------------
+# 1. Load fine-tuned model
+# -------------------------------
+@st.cache_resource
 def load_model():
     model_path = "model_finetuned.pth"
-    url = "https://drive.google.com/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=drive_link"
-    # Download the model if not exists
+    
+    # Google Drive file ID
+    file_id = "https://drive.google.com/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=drive_link"
+    url = f"https://drive.google.com/uc?id={file_id}"
+    
+    # Download if not present locally
     if not os.path.exists(model_path):
-        print("Downloading model...")
-        urllib.request.urlretrieve(url, model_path)
-        print("Download complete!")
-
-    # Initialize the model architecture
-    model = models.resnet18(weights=None)  # No pretrained weights
-    model.fc = nn.Linear(model.fc.in_features, 2)  # Adjust for 2 classes
-
-    # ✅ Load model weights safely (PyTorch ≥2.6)
-    try:
-        model.load_state_dict(torch.load(model_path, map_location="cpu", weights_only=False))
-    except Exception as e:
-        # If weights_only=False fails, fallback to older method
-        print("Warning: weights_only=False failed. Attempting legacy load...")
-        model.load_state_dict(torch.load(model_path, map_location="cpu"))
-
-    model.eval()  # Set to evaluation mode
+        st.info("Downloading model...")
+        gdown.download(url, model_path, quiet=False)
+    
+    # Load model
+    model = models.resnet18(weights=None)
+    model.fc = nn.Linear(model.fc.in_features, 2)
+    
+    # Use weights_only=False for full checkpoint
+    state_dict = torch.load(model_path, map_location="cpu", weights_only=False)
+    model.load_state_dict(state_dict)
+    model.eval()
+    
+    st.success("Model loaded successfully ✅")
     return model
 
-# Usage in Streamlit
+# Load model
 model = load_model()
+
 
 
 # -------------------------------
@@ -60,6 +66,7 @@ if uploaded_file:
         _, predicted = torch.max(output, 1)
         classes = ["Normal", "Pneumonia"]
         st.subheader(f"🩺 Prediction: **{classes[predicted.item()]}**")
+
 
 
 
