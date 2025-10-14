@@ -11,14 +11,23 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 # -------------------------------
 # 1. Load fine-tuned model
 # -------------------------------
+
+import urllib.request
+
 @st.cache_resource
 def load_model():
     model_path = "model_finetuned.pth"
-    model = models.resnet18(weights=None)
+
+    if not os.path.exists(model_path):
+        url =https://drive.google.com/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=sharing  # e.g. a public Google Drive or Dropbox link
+        urllib.request.urlretrieve(url, model_path)
+
+    model = models.resnet18(pretrained=False)
     model.fc = nn.Linear(model.fc.in_features, 2)
     model.load_state_dict(torch.load(model_path, map_location="cpu"))
     model.eval()
     return model
+
 
 model = load_model()
 
@@ -84,3 +93,4 @@ if uploaded_file is not None:
     plt.imshow(visualization)
     plt.axis("off")
     st.pyplot(plt)
+
