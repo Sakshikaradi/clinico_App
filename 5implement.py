@@ -6,8 +6,7 @@ import torch.nn as nn
 
 def load_model():
     model_path = "model_finetuned.pth"
-    url = "https://drive.google.com/uc?export=download&id=1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=sharing"
-
+    url = https://drive.google.com/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=drive_link
     # Download the model if not exists
     if not os.path.exists(model_path):
         print("Downloading model...")
@@ -61,6 +60,7 @@ if uploaded_file:
         _, predicted = torch.max(output, 1)
         classes = ["Normal", "Pneumonia"]
         st.subheader(f"🩺 Prediction: **{classes[predicted.item()]}**")
+
 
 
 
