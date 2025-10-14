@@ -13,12 +13,6 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 # -------------------------------
 # 1. Load fine-tuned model
 # -------------------------------
-@st.cache_resource
-import os
-import torch
-from torchvision import models
-import torch.nn as nn
-import streamlit as st
 
 @st.cache_resource
 def load_model():
@@ -74,5 +68,6 @@ if uploaded_file:
         _, predicted = torch.max(output, 1)
         classes = ["Normal", "Pneumonia"]
         st.subheader(f"🩺 Prediction: **{classes[predicted.item()]}**")
+
 
 
