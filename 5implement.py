@@ -13,7 +13,7 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 # -------------------------------
 @st.cache_resource
 def load_model():
-    model_path = "https://drive.google.com/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=sharing"
+    model_path = "https://drive.google.com/uc?export=download&id=/file/d/1b2MVNoOAKrkV9wO4amuWPj4BTH3LvlY0/view?usp=sharing"
     model = models.resnet18(weights=None)
     model.fc = nn.Linear(model.fc.in_features, 2)
     model.load_state_dict(torch.load(model_path, map_location="cpu"))
@@ -84,4 +84,5 @@ if uploaded_file is not None:
     plt.imshow(visualization)
     plt.axis("off")
     st.pyplot(plt)
+
 
